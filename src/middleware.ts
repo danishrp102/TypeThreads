@@ -6,45 +6,36 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
     async function middleware(req) {
-        const pathname = req.nextUrl.pathname
+        const pathname = req.nextUrl.pathname;
+        const isAuth = await getToken({ req });
+        // console.log("Auth: ", isAuth);
+
+        if (pathname === '/') {
+            return NextResponse.redirect(new URL('/login', req.url));
+        }
+
+        if (pathname === '/login') {
+            if (isAuth) {
+                return NextResponse.redirect(new URL('/dashboard', req.url));
+            }
+        }
+
+        if (pathname.startsWith('/dashboard')) {
+            if (!isAuth) {
+                return NextResponse.redirect(new URL('/login', req.url));
+            }
+
+            return NextResponse.next();
+        }
 
         // console.log("Pathname: ", pathname);
 
         // Manage the route protection
-        const isAuth = await getToken({ req });
+        // const isAuth = await getToken({ req });
         // const isLoginPage = pathname.startsWith('/login');
-        const isPublicPath = pathname.startsWith('/login') || pathname === '/';
-
-        if (isAuth && isPublicPath) {
-            return NextResponse.redirect(new URL('/dashboard', req.url));
-        }
-
-        if (!isAuth && !isPublicPath) {
-            return NextResponse.redirect(new URL('/login', req.url));
-        }
 
         // const sensitiveRoutes = ['/dashboard'];
         // const isAccessingSensitiveRoutes = sensitiveRoutes.some((route) => pathname.startsWith(route));
-
-        // if (!isAuth) {
-        //     return NextResponse.redirect(new URL('/login', req.url));
-        // }
-
-        // if (pathname === '/login' || pathname === '/') {
-        //     if (isAuth) {
-        //         return NextResponse.redirect(new URL('/dashboard', req.url));
-        //     }
-
-        //     return NextResponse.next();
-        // }
-
-        // if (isAuth) {
-
-        // }
-
-        // if (!isAuth && isAccessingSensitiveRoutes) {
-        //     return NextResponse.redirect(new URL('/login', req.url));
-        // }
 
         // if (isLoginPage) {
         //     if (isAuth) {
@@ -69,7 +60,7 @@ export default withAuth(
         // }
     }, {
     callbacks: {
-        async authorized() { // prevents infinite redirect to the same page
+        async authorized() {
             return true;
         },
     }
@@ -77,5 +68,5 @@ export default withAuth(
 )
 
 export const config = {
-    matcher: ['/', '/login', '/dashboard', '/dashboard/:path*']
+    matcher: ['/', '/login', '/dashboard/:path*']
 }
