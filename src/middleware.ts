@@ -19,7 +19,7 @@ export default withAuth(
 
         if (isLoginPage) {
             if (isAuth) {
-                // console.log("Login success, you are being redirected!");
+                console.log("Login success, you are being redirected!");
 
                 return NextResponse.redirect(new URL('/dashboard', req.url));
             }
@@ -28,19 +28,19 @@ export default withAuth(
         }
 
         if (!isAuth && isAccessingSensitiveRoutes) {
-            // console.log("not authenticated or accessing sensitive routes");
+            console.log("not authenticated or accessing sensitive routes");
 
             return NextResponse.redirect(new URL('/login', req.url));
         }
 
         if (pathname === '/') {
-            // console.log("Login page redirection");
+            console.log("Login page redirection");
 
-            return NextResponse.redirect(new URL('/login', req.url));
+            return NextResponse.redirect(new URL('/dashboard', req.url));
         }
     }, {
     callbacks: {
-        async authorized() {
+        async authorized() { // prevents infinite redirect to the same page
             return true;
         },
     }
@@ -48,5 +48,5 @@ export default withAuth(
 )
 
 export const config = {
-    matcher: ['/', '/login', '/dashboard/:path*']
+    matcher: ['/', '/login', '/dashboard/:path*'],
 }
