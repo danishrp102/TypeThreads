@@ -12,32 +12,61 @@ export default withAuth(
 
         // Manage the route protection
         const isAuth = await getToken({ req });
-        const isLoginPage = pathname.startsWith('/login');
+        // const isLoginPage = pathname.startsWith('/login');
+        const isPublicPath = pathname.startsWith('/login') || pathname === '/';
 
-        const sensitiveRoutes = ['/dashboard'];
-        const isAccessingSensitiveRoutes = sensitiveRoutes.some((route) => pathname.startsWith(route));
-
-        if (isLoginPage) {
-            if (isAuth) {
-                // console.log("Login success, you are being redirected!");
-
-                return NextResponse.redirect(new URL('/dashboard', req.url));
-            }
-
-            return NextResponse.next();
+        if (isAuth && isPublicPath) {
+            return NextResponse.redirect(new URL('/dashboard', req.url));
         }
 
-        if (!isAuth && isAccessingSensitiveRoutes) {
-            // console.log("not authenticated or accessing sensitive routes");
-
+        if (!isAuth && !isPublicPath) {
             return NextResponse.redirect(new URL('/login', req.url));
         }
 
-        if (pathname === '/') {
-            // console.log("Login page redirection");
+        // const sensitiveRoutes = ['/dashboard'];
+        // const isAccessingSensitiveRoutes = sensitiveRoutes.some((route) => pathname.startsWith(route));
 
-            return NextResponse.redirect(new URL('/dashboard', req.url));
-        }
+        // if (!isAuth) {
+        //     return NextResponse.redirect(new URL('/login', req.url));
+        // }
+
+        // if (pathname === '/login' || pathname === '/') {
+        //     if (isAuth) {
+        //         return NextResponse.redirect(new URL('/dashboard', req.url));
+        //     }
+
+        //     return NextResponse.next();
+        // }
+
+        // if (isAuth) {
+
+        // }
+
+        // if (!isAuth && isAccessingSensitiveRoutes) {
+        //     return NextResponse.redirect(new URL('/login', req.url));
+        // }
+
+        // if (isLoginPage) {
+        //     if (isAuth) {
+        //         // console.log("Login success, you are being redirected!");
+
+        //         return NextResponse.redirect(new URL('/dashboard', req.url));
+        //     }
+
+        //     return NextResponse.next();
+        // }
+
+        // if (!isAuth && isAccessingSensitiveRoutes) {
+        //     // console.log("not authenticated or accessing sensitive routes");
+
+        //     return NextResponse.redirect(new URL('/login', req.url));
+        // }
+
+        // if (pathname === '/') {
+        //     // console.log("Login page redirection");
+
+        //     return NextResponse.redirect(new URL('/dashboard', req.url));
+        // }
     }, {
     callbacks: {
         async authorized() { // prevents infinite redirect to the same page
