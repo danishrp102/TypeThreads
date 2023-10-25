@@ -10,7 +10,6 @@ export default withAuth(
 
         // console.log("Pathname: ", pathname);
 
-
         // Manage the route protection
         const isAuth = await getToken({ req });
         const isLoginPage = pathname.startsWith('/login');
