@@ -5,6 +5,7 @@ import Button from './ui/Button';
 import { signOut } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { Loader2, LogOut } from 'lucide-react';
+// import { useRouter } from 'next/navigation';
 
 interface SignOutButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   
@@ -12,11 +13,13 @@ interface SignOutButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const SignOutButton: FC<SignOutButtonProps> = ({...props}) => {
     const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
+    // const router = useRouter();
   return (
     <Button {...props} variant="ghost" onClick={async () => {
         setIsSigningOut(true);
         try {
             await signOut();
+            // router.push("/login");
         } catch (error) {
             toast.error("There was an error signing out");
         } finally {

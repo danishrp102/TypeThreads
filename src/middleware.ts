@@ -6,58 +6,38 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
     async function middleware(req) {
-        const pathname = req.nextUrl.pathname;
+        const pathname = req.nextUrl.pathname
+
+        // console.log("Pathname: ", pathname);
+
+        // Manage the route protection
         const isAuth = await getToken({ req });
-        // console.log("Auth: ", isAuth);
+        const isLoginPage = pathname.startsWith('/login');
 
-        if (pathname === '/') {
-            return NextResponse.redirect(new URL('/login', req.url));
-        }
+        const sensitiveRoutes = ['/dashboard'];
+        const isAccessingSensitiveRoutes = sensitiveRoutes.some((route) => pathname.startsWith(route));
 
-        if (pathname === '/login') {
+        if (isLoginPage) {
             if (isAuth) {
-                return NextResponse.redirect(new URL('/dashboard', req.url));
-            }
-        }
+                // console.log("Login success, you are being redirected!");
 
-        if (pathname.startsWith('/dashboard')) {
-            if (!isAuth) {
-                return NextResponse.redirect(new URL('/login', req.url));
+                return NextResponse.redirect(new URL('/dashboard', req.url));
             }
 
             return NextResponse.next();
         }
 
-        // console.log("Pathname: ", pathname);
+        if (!isAuth && isAccessingSensitiveRoutes) {
+            // console.log("not authenticated or accessing sensitive routes");
 
-        // Manage the route protection
-        // const isAuth = await getToken({ req });
-        // const isLoginPage = pathname.startsWith('/login');
+            return NextResponse.redirect(new URL('/login', req.url));
+        }
 
-        // const sensitiveRoutes = ['/dashboard'];
-        // const isAccessingSensitiveRoutes = sensitiveRoutes.some((route) => pathname.startsWith(route));
+        if (pathname === '/') {
+            // console.log("Login page redirection");
 
-        // if (isLoginPage) {
-        //     if (isAuth) {
-        //         // console.log("Login success, you are being redirected!");
-
-        //         return NextResponse.redirect(new URL('/dashboard', req.url));
-        //     }
-
-        //     return NextResponse.next();
-        // }
-
-        // if (!isAuth && isAccessingSensitiveRoutes) {
-        //     // console.log("not authenticated or accessing sensitive routes");
-
-        //     return NextResponse.redirect(new URL('/login', req.url));
-        // }
-
-        // if (pathname === '/') {
-        //     // console.log("Login page redirection");
-
-        //     return NextResponse.redirect(new URL('/dashboard', req.url));
-        // }
+            return NextResponse.redirect(new URL('/dashboard', req.url));
+        }
     }, {
     callbacks: {
         async authorized() {
