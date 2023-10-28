@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 // export const fetchCache = 'force-no-store';
 
 const Page: FC = () => {
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     async function loginWithGoogle() {
@@ -41,7 +42,12 @@ const Page: FC = () => {
                         height={200}
                         width={200}
                     />
+                    {/* <h2 className='mt-6 text-center text-1xl font-bold tracking-tight text-gray-900'>
+                        A realime-chat application built using TypeScript, Nextjs13, React, Redis and Pusher
+                    </h2> */}
+            
                     <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>Sign in to your account</h2>
+
                 </div>
 
                 <Button

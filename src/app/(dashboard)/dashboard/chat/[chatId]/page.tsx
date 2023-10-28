@@ -10,7 +10,10 @@ import { notFound } from 'next/navigation';
 
 export async function generateMetadata({params} : {params: { chatId: string }}) {
     const session = await getServerSession(authOptions);
-    if (!session) notFound();
+    if (!session) {
+        window.location.href = "/login";
+        notFound();
+    }
 
     const [userId1, userId2] = params.chatId.split('--');
     const { user } = session;

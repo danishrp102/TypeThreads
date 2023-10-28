@@ -22,7 +22,7 @@ const SignOutButton: FC<SignOutButtonProps> = ({...props}) => {
             await signOut();
             // redirect("/login");
 
-            // window.location.href = "/login";
+            window.location.href = "/login";
         } catch (error) {
             toast.error("There was an error signing out");
         } finally {
