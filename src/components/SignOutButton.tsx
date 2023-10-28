@@ -20,6 +20,7 @@ const SignOutButton: FC<SignOutButtonProps> = ({...props}) => {
         setIsSigningOut(true);
         try {
             await signOut();
+            
             // redirect("/login");
             // window.location.href = "/login";
         } catch (error) {
