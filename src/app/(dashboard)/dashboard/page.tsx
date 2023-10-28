@@ -14,7 +14,7 @@ const page = async ({}) => {
 
   if(!session) {
     // redirect("/login?callbackUrl=/dashboard")
-    window.location.href = "/login";
+    // window.location.href = "/login";
     notFound();
   }
 

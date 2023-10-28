@@ -11,7 +11,7 @@ import { notFound } from 'next/navigation';
 export async function generateMetadata({params} : {params: { chatId: string }}) {
     const session = await getServerSession(authOptions);
     if (!session) {
-        window.location.href = "/login";
+        // window.location.href = "/login";
         notFound();
     }
 
