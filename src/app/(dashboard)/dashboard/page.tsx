@@ -13,7 +13,7 @@ const page = async ({}) => {
   const session = await getServerSession(authOptions);
 
   if(!session) {
-    redirect("/login?callbackUrl=/dashboard")
+    // redirect("/login?callbackUrl=/dashboard")
     notFound();
   }
 
