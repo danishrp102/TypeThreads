@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToDeny);
         return new Response("OK", { status: 200 });
     } catch (error) {
-        console.log(error);
+        console.log("/api/friends/deny error: ", error);
 
         if (error instanceof z.ZodError) {
             return new Response("Invalid request payload", { status: 422 });
