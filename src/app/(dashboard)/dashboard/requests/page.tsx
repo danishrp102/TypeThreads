@@ -9,7 +9,10 @@ const page = async ({}) => {
     // console.log("Inside requests page");    
 
     const session = await getServerSession(authOptions);
-    if(!session)  notFound();
+    if(!session) {
+
+        notFound();
+    }  
 
     // console.log("session id: ", session);
     
