@@ -1,3 +1,4 @@
+import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -13,6 +14,17 @@ export async function POST(req: Request) {
         }
 
         const { id: idToDeny } = z.object({ id: z.string() }).parse(body);
+
+        // Verify that the user has a friend request from the user they are trying to deny
+        const hasFriendRequest = (await fetchRedis(
+            'sismember',
+            `user:${session.user.id}:incoming_friend_requests`,
+            idToDeny
+        )) as 0 | 1;
+
+        if (!hasFriendRequest) {
+            return new Response("This user has not sent you a friend request", { status: 400 });
+        }
 
         await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToDeny);
         return new Response("OK", { status: 200 });

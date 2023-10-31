@@ -22,11 +22,11 @@ export async function POST(req: Request) {
             cache: 'no-store', // delivers fresh data from the db
         })
 
-        const data = await RESTResponse.json() as { result: string | null }
+        const data = (await RESTResponse.json()) as { result: string | null }
         // console.log(data);
 
-        const idToAdd = await fetchRedis('get', `user:email:${emailToAdd}`) as string;
-        // const idToAdd = data.result;
+        // const idToAdd = await fetchRedis('get', `user:email:${emailToAdd}`) as string;
+        const idToAdd = data.result;
 
         if (!idToAdd) {
             return new Response("This person does not exist.", { status: 400 })
@@ -43,19 +43,19 @@ export async function POST(req: Request) {
         }
 
         // check if the user is already added
-        const isAlreadyAdded = await fetchRedis("sismember", `user:${idToAdd}:incoming_friend_requests`, // s (in sismember) --> set in Redis (unstructured array of data)
-            session.user.id) as 0 | 1;
+        const isAlreadyAdded = (await fetchRedis("sismember", `user:${idToAdd}:incoming_friend_requests`, // s (in sismember) --> set in Redis (unstructured array of data)
+            session.user.id)) as 0 | 1;
 
         if (isAlreadyAdded) {
             return new Response('Already added this user', { status: 400 });
         }
 
         // check if the friend is already added
-        const isAlreadyFriends = await fetchRedis(
+        const isAlreadyFriends = (await fetchRedis(
             "sismember",
             `user:${session.user.id}:friends`,
             idToAdd
-        ) as 0 | 1;
+        )) as 0 | 1;
 
         if (isAlreadyFriends) {
             return new Response('Already friends with this user', { status: 400 });
@@ -82,6 +82,7 @@ export async function POST(req: Request) {
             return new Response("Invalid request payload", { status: 422 });
         }
 
+        console.log("add friends route error: ", error);
         return new Response('Invalid request', { status: 400 });
     }
 }
