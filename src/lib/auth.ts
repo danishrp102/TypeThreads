@@ -77,16 +77,14 @@ export const authOptions: NextAuthOptions = {
 
         async jwt({ token, user }) {
             // const dbUser = (await db.get(`user:${token.id}`)) as User | null
-            const dbUserResult = await fetchRedis('get', `user:${token.id}`) as
-                | string
-                | null;
-
+            const dbUserResult = await fetchRedis('get', `user:${token.id}`) as string | null;
 
             if (!dbUserResult) {
-                if (user) {
-                    token.id = user!.id
-                }
+                // if (user) {
+                // token.id = user!.id
+                // }
 
+                token.id = user!.id;
                 return token;
             }
 
@@ -116,5 +114,5 @@ export const authOptions: NextAuthOptions = {
         }
     },
 
-    secret: process.env.NEXTAUTH_SECRET,
+    // secret: process.env.NEXTAUTH_SECRET,
 }

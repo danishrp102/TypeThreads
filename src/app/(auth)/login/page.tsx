@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button'
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import { FC, useState } from 'react'
-import toast from 'react-hot-toast';
+import {toast} from 'react-hot-toast';
 
 const Page: FC = () => {
 

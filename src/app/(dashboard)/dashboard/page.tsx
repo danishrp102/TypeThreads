@@ -14,7 +14,7 @@ const page = async ({}) => {
 
   if(!session) {
     // redirect("/login?callbackUrl=/dashboard")
-    window.location.href = "/login";
+    // window.location.href = "/login";
     notFound();
   }
 
@@ -55,7 +55,7 @@ const page = async ({}) => {
             </p>
         ) : (
           friendsWithLastMessage.map((friend) => (
-            <div key={friend.id} className='relative bg-zinc-50 border border-zinc-200 p-3 rounded-md'>
+            <div key={`chat-${friend.id}`} className='relative bg-zinc-50 border border-zinc-200 p-3 rounded-md'>
               <div className='absolute right-4 inset-y-0 flex items-center'>
                 <ChevronRight className='h-7 w-7 text-zinc-400' />
               </div>
