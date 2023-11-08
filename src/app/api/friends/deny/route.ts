@@ -26,8 +26,13 @@ export async function POST(req: Request) {
             return new Response("This user has not sent you a friend request", { status: 400 });
         }
 
+        // Remove the friend request from the incoming friend requests list
         await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToDeny);
-        return new Response("OK", { status: 200 });
+
+        // Remove the friend request from the other user's outgoing friend requests list
+        await db.srem(`user:${idToDeny}:outgoing_friend_requests`, session.user.id);
+
+        return new Response("OK, Friend Request Denied", { status: 200 });
     } catch (error) {
         console.log("/api/friends/deny error: ", error);
 

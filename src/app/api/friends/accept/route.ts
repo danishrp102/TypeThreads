@@ -60,9 +60,11 @@ export async function POST(req: Request) {
                 'new_friend',
                 friend
             ),
-            db.sadd(`user:${session.user.id}:friends`, idToAdd),
-            db.sadd(`user:${idToAdd}:friends`, session.user.id),
-            db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd),
+
+            db.sadd(`user:${session.user.id}:friends`, idToAdd), // add user to friends list
+            db.sadd(`user:${idToAdd}:friends`, session.user.id), // add friend to users list
+            db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd), // remove the friend req from incoming friend request list
+            db.srem(`user:${idToAdd}:outgoing_friend_requests`, session.user.id), // remove the friend request from the other user's outgoing friend requests list
         ])
 
 
@@ -85,11 +87,14 @@ export async function POST(req: Request) {
         return new Response("Friend Request Accepted", { status: 200 });
     } catch (error) {
 
+        console.log("/api/friends/accept error: ", error);
+
+
         if (error instanceof z.ZodError) {
             return new Response("Invalid request payload", { status: 422 });
         }
 
-        console.log("/api/friends/accept error:", error);
+        // console.log("/api/friends/accept error:", error);
         return new Response("Invalid Request", { status: 400 });
     }
 }

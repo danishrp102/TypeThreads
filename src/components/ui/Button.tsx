@@ -15,6 +15,7 @@ export const buttonVariants = cva(
                 default: 'h-10 py-2 px-4',
                 sm: 'h-9 px-2',
                 lg: 'h-11 px-8',
+                xl: 'h-12 px-9',
             },
         },
         defaultVariants: {
@@ -27,7 +28,7 @@ export const buttonVariants = cva(
 export interface ButtonProps
     extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-    isLoading ?: boolean
+    isLoading?: boolean
 }
 
 const Button: FC<ButtonProps> = ({className, children, variant, isLoading, size, ...props}) => {

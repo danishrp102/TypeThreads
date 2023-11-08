@@ -10,13 +10,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 interface AddFriendButtonProps {}
 
-type FormData = z.infer<typeof addFriendValidator>
 
 const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
-
+    
     const [showSuccessState, setShowSuccessState] = useState<boolean>(false);
+    type FormData = z.infer<typeof addFriendValidator>
 
-    const {register, handleSubmit, setError, formState: {errors}} = useForm<FormData>({
+    const {register, handleSubmit, reset, setError, formState: {errors}} = useForm<FormData>({
         resolver: zodResolver(addFriendValidator),
     })
 
@@ -28,16 +28,18 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
                 email: validatedEmail,
             })
 
+            // empty input
+            reset()
             setShowSuccessState(true);
         } catch (error) {
             if(error instanceof z.ZodError) {
                 setError('email', {message: error.message})
-                return;
+                return console.log('Zod error', error);
             }
 
             if(error instanceof AxiosError) {
                 setError('email', {message: error.response?.data})
-                return;
+                return console.log('Axios error', error);
             }
 
             setError('email', {message: "Something went wrong."})
@@ -69,10 +71,16 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
                 Add
             </Button>
         </div>
-        <p className='mt-1 text-sm text-red-600'>{errors.email?.message}</p>
+
+        {/* <p className='mt-1 text-sm text-red-600'>{errors.email?.message}</p>
         {showSuccessState ? (
             <p className='mt-1 text-sm text-green-600'>Friend requent sent!</p>
-        ) : null}
+        ) : null} */}
+
+        {errors.email && <p className='mt-1 text-sm text-red-600'>{errors.email?.message}</p>}
+
+        {showSuccessState && <p className='mt-1 text-sm text-green-600'>Friend request sent!</p>}
+
     </form>
   )
 }

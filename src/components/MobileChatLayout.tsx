@@ -9,6 +9,7 @@ import { Icons } from './Icons'
 import Image from 'next/image'
 import SignOutButton from './SignOutButton'
 import FriendRequestsSidebarOptions from './FriendRequestsSidebarOptions'
+import SentRequestsSidebarOption from './SentRequestsSidebarOption'
 import SidebarChatList from './SidebarChatList'
 import { Session } from 'next-auth'
 import { SidebarOption } from '@/types/typings'
@@ -19,15 +20,18 @@ interface MobileChatLayoutProps {
   session: Session
   sidebarOptions: SidebarOption[]
   unseenRequestCount: number
+  sentRequestCount: number
 }
 
-const MobileChatLayout: FC<MobileChatLayoutProps> = ({friends, session, sidebarOptions, unseenRequestCount}) => {
+const MobileChatLayout: FC<MobileChatLayoutProps> = ({friends, session, sidebarOptions, unseenRequestCount, sentRequestCount}) => {
 
     const [open, setOpen] = useState<boolean>(false);
     const pathname = usePathname();
 
     useEffect(() => {
-        setOpen(false);
+        open && setOpen(false);
+
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname])
 
   return (
@@ -125,6 +129,13 @@ const MobileChatLayout: FC<MobileChatLayoutProps> = ({friends, session, sidebarO
                                     sessionId={session.user.id}
                                   />
                                 </li>
+
+                                <li>
+																	<SentRequestsSidebarOption 
+                                    sessionId={session.user.id} 
+                                    initialSentRequestCount={sentRequestCount} 
+                                  />
+																</li>
                               </ul>
                             </li>
 

@@ -4,8 +4,9 @@ import { pusherClient } from '@/lib/pusher';
 import { chatHrefConstructor, toPusherKey } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useEffect, useState } from 'react'
-import toast from 'react-hot-toast';
+import {toast} from 'react-hot-toast';
 import UnseenChatToast from './UnseenChatToast';
+import Image from 'next/image'
 
 interface SidebarChatListProps {
     friends: User[]
@@ -30,7 +31,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({friends, sessionId}) => {
 
         const newFriendHandler = (newFriend: User) => {
             // console.log("Received new user");
-            setActiveChats((prev) => [...prev, newFriend]);
+            setActiveChats(prev => [...prev, newFriend]);
             // router.refresh(); // refresh the current window without hard reloading the page
         }
 
@@ -41,10 +42,10 @@ const SidebarChatList: FC<SidebarChatListProps> = ({friends, sessionId}) => {
             if(!shouldNotify) return; // do not notify the sender
 
             // notify the friend about the new message
-            toast.custom((t) => (
+            toast.custom(toast => (
                 // custom component
                 <UnseenChatToast 
-                    t={t}
+                    t={toast}
                     sessionId={sessionId}
                     senderId={message.senderId}
                     senderImage={message.senderImg}
@@ -53,7 +54,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({friends, sessionId}) => {
                 />
             ))
 
-            setUnseenMessages((prev) => [...prev, message]);
+            setUnseenMessages(prev => [...prev, message]);
         }
 
         pusherClient.bind('new_message', chatHandler);
@@ -72,37 +73,34 @@ const SidebarChatList: FC<SidebarChatListProps> = ({friends, sessionId}) => {
 
     useEffect(() => {
         if(pathname?.includes('chat')) {
-            setUnseenMessages((prev) => {
-                return prev.filter((msg) => !pathname.includes(msg.senderId))
+            setUnseenMessages(prev => {
+                return prev.filter((msg) => !pathname?.includes(msg.senderId))
             })
         }
     }, [pathname]);
 
-  return (
+return (
     <ul role='list' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
-        {activeChats.sort().map((friend) => {
-            const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
-                return unseenMsg.senderId === friend.id
-            }).length
-
-            return <li key={friend.id}>
-                <a
-                    href={`/dashboard/chat/${chatHrefConstructor(sessionId, friend.id)}`}
-                    className='text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                >
-                    {friend.name}
-                    {unseenMessagesCount > 0 ? (
-                        <div className='bg-indigo-600 font-medium text-xs text-white w-4 h-4 rounded-full flex justify-center items-center'>
-                            {unseenMessagesCount}
-                        </div>
-                    ) : (
-                        <div></div>
-                    )}
-                </a>
-            </li>
+        {activeChats.sort().map(friend => {
+            const unseenMessagesCount = unseenMessages.filter(unseenMessage => unseenMessage.senderId === friend.id).length
+            return (
+                <li key={`friend-${friend.id}`}>
+                    <a
+                        href={`/dashboard/chat/${chatHrefConstructor(sessionId, friend.id)}`}
+                        className='text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'>
+                        <Image src={friend.image} width={30} height={30} className='rounded-full' alt={friend.name} />
+                        {friend.name}
+                        {unseenMessagesCount > 0 && (
+                            <div className='bg-indigo-600 text-xs font-medium text-white w-4 h-4 rounded-full flex justify-center items-center'>
+                                {unseenMessagesCount}
+                            </div>
+                        )}
+                    </a>
+                </li>
+            )
         })}
     </ul>
-  )
+)
 }
 
-export default SidebarChatList;
+export default SidebarChatList

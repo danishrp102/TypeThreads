@@ -50,6 +50,7 @@ export async function POST(req: Request, res: Response) {
         const messageData: Message = {
             id: nanoid(), // nanoid generates an id to uniquely identify each message
             senderId: session.user.id,
+            receiverId: friendId,
             text,
             timestamp
         }

@@ -43,8 +43,11 @@ export async function POST(req: Request) {
         }
 
         // check if the user is already added
-        const isAlreadyAdded = (await fetchRedis("sismember", `user:${idToAdd}:incoming_friend_requests`, // s (in sismember) --> set in Redis (unstructured array of data)
-            session.user.id)) as 0 | 1;
+        const isAlreadyAdded = (await fetchRedis(
+            "sismember",
+            `user:${idToAdd}:incoming_friend_requests`,
+            session.user.id
+        )) as 0 | 1; // s (in sismember) --> set in Redis (unstructured array of data)
 
         if (isAlreadyAdded) {
             return new Response('Already added this user', { status: 400 });
@@ -75,6 +78,8 @@ export async function POST(req: Request) {
         )
 
         db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
+        db.sadd(`user:${session.user.id}:outgoing_friend_requests`, idToAdd); // add to outgoing friend requests list for the user who sent the request
+
         return new Response("OK");
 
     } catch (error) {

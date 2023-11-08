@@ -15,7 +15,21 @@ interface FriendRequestsProps {
 const FriendRequests: FC<FriendRequestsProps> = ({incomingFriendRequests, sessionId}) => {
 
     const [friendRequests, setFriendRequests] = useState<IncomingFriendRequest[]>(incomingFriendRequests);
-    const router = useRouter(); 
+    const router = useRouter();
+    
+    const acceptFriend = async (senderId: string) => {
+        await axios.post('/api/friends/accept', {id: senderId});
+
+        setFriendRequests(prev => prev.filter(request => request.senderId !== senderId));
+        router.refresh();
+    }
+
+    const denyFriend = async (senderId: string) => {
+        await axios.post('/api/friends/deny', {id: senderId});
+
+        setFriendRequests(prev => prev.filter(request => request.senderId !== senderId));
+        router.refresh();
+    }
 
     useEffect(() => {
         pusherClient.subscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`));
@@ -24,7 +38,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({incomingFriendRequests, sessio
 
         const friendRequestHandler = ({senderId, senderEmail} : IncomingFriendRequest) => {
             // console.log("New friend Request handler function called!");
-            setFriendRequests((prev) => [...prev, {senderId, senderEmail}]);
+            setFriendRequests(prev => [...prev, {senderId, senderEmail}]);
         }
 
         pusherClient.bind('incoming_friend_requests', friendRequestHandler);
@@ -35,20 +49,6 @@ const FriendRequests: FC<FriendRequestsProps> = ({incomingFriendRequests, sessio
         }
 
     }, [sessionId])
-
-    const acceptFriend = async (senderId: string) => {
-        await axios.post('/api/friends/accept', {id: senderId});
-
-        setFriendRequests((prev) => prev.filter((request) => request.senderId !== senderId));
-        router.refresh();
-    }
-
-    const denyFriend = async (senderId: string) => {
-        await axios.post('/api/friends/deny', {id: senderId});
-
-        setFriendRequests((prev) => prev.filter((request) => request.senderId !== senderId));
-        router.refresh();
-    }
 
   return (
    <>

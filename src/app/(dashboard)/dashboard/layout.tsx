@@ -1,6 +1,7 @@
 import FriendRequestsSidebarOptions from '@/components/FriendRequestsSidebarOptions'
 import { Icon, Icons } from '@/components/Icons'
 import MobileChatLayout from '@/components/MobileChatLayout'
+import SentRequestsSidebarOption from '@/components/SentRequestsSidebarOption'
 import SidebarChatList from '@/components/SidebarChatList'
 import SignOutButton from '@/components/SignOutButton'
 import { getFriendsByUserId } from '@/helpers/get-friends-by-user-id'
@@ -43,6 +44,12 @@ const Layout= async ({children} : LayoutProps) => {
         )) as User[]
     ).length
 
+    const sentRequestCount = ((await fetchRedis(
+        'smembers', 
+        `user:${session.user.id}:outgoing_friend_requests`
+        )) as User[]
+    ).length
+
   return (
     <div className='w-full flex h-screen'>
         <div className='md:hidden'>
@@ -51,6 +58,7 @@ const Layout= async ({children} : LayoutProps) => {
                 session={session}
                 sidebarOptions={sidebarOptions}
                 unseenRequestCount={unseenReqCount}
+                sentRequestCount={sentRequestCount}
             />
         </div>
 
@@ -97,6 +105,13 @@ const Layout= async ({children} : LayoutProps) => {
                                     initialUnseenReqCount={unseenReqCount} 
                                 />
                             </li>
+
+                            <li>
+								<SentRequestsSidebarOption 
+                                    sessionId={session.user.id} 
+                                    initialSentRequestCount={sentRequestCount} 
+                                />
+							</li>
                         </ul>
                     </li>
 

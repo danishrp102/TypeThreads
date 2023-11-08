@@ -21,7 +21,7 @@ const page = async ({}) => {
   const friends = await getFriendsByUserId(session.user.id);
 
   const friendsWithLastMessage = await Promise.all(
-    friends.map(async (friend) => {
+    friends.map(async friend => {
       const [lastMessageRaw] = (await fetchRedis(
         'zrange', 
         `chat:${chatHrefConstructor(session.user.id, friend.id)}:messages`, 

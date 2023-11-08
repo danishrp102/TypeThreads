@@ -17,12 +17,19 @@ interface MessagesProps {
 
 const Messages: FC<MessagesProps> = ({initialMessages, sessionId, chatId, sessionImg, chatPartner}) => {
 
+    const [messages, setMessages] = useState<Message[]>(initialMessages);
+    const scrollDownRef = useRef<HTMLDivElement | null>(null);
+
+    const formatTimestamp = (timestamp: number) => {
+        return format(timestamp, 'HH:mm');
+    }
+
     useEffect(() => {
         pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
 
 
         const messageHandler = (message: Message) => {
-            setMessages((prev) => [message, ...prev]);
+            setMessages(prev => [message, ...prev]);
         }
 
         pusherClient.bind('incoming-message', messageHandler);
@@ -33,13 +40,6 @@ const Messages: FC<MessagesProps> = ({initialMessages, sessionId, chatId, sessio
         }
 
     }, [chatId])
-
-    const [messages, setMessages] = useState<Message[]>(initialMessages);
-    const scrollDownRef = useRef<HTMLDivElement | null>(null);
-
-    const formatTimestamp = (timestamp: number) => {
-        return format(timestamp, 'HH:mm');
-    }
 
   return (
     <div id='messages' className='flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch'>
@@ -78,7 +78,7 @@ const Messages: FC<MessagesProps> = ({initialMessages, sessionId, chatId, sessio
                         <div className={cn('relative w-6 h-6', {
                             'order-2': isCurrentUser,
                             'order-1': !isCurrentUser,
-                            'invisible': hasNextMessageFromSameUser
+                            invisible: hasNextMessageFromSameUser
                         })}>
                             <Image
                                 fill

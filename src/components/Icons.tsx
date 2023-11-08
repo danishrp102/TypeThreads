@@ -9,7 +9,7 @@ export const Icons = {
             />
         </svg>
     ),
-    UserPlus
+    UserPlus,
 }
 
 export type Icon = keyof typeof Icons;

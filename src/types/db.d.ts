@@ -8,6 +8,7 @@ interface User {
 interface Chat {
     id: string
     messages: Message[]
+    lastMessage: string // to be contd..
 }
 
 interface Message {
@@ -22,4 +23,5 @@ interface FriendRequest {
     id: string
     senderId: string
     receiverId: string
+    timestamp: number // to be contd..
 }

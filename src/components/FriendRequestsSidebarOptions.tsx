@@ -20,11 +20,11 @@ const FriendRequestsSidebarOptions: FC<FriendRequestsSidebarOptionsProps> = ({se
         pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
 
         const friendRequestHandler = () => {
-            setUnseenReqCount((prev) => prev + 1);
+            setUnseenReqCount(prev => prev + 1);
         }
 
         const addedFriendHandler = () => {
-            setUnseenReqCount((prev) => prev - 1);
+            setUnseenReqCount(prev => prev - 1);
         }
 
         pusherClient.bind('incoming_friend_requests', friendRequestHandler);
@@ -32,9 +32,9 @@ const FriendRequestsSidebarOptions: FC<FriendRequestsSidebarOptionsProps> = ({se
 
         return () => {
             pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`));
+            pusherClient.unbind('incoming_friend_requests', friendRequestHandler);
             pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`));
             pusherClient.unbind('new_friend', addedFriendHandler);
-            pusherClient.unbind('incoming_friend_requests', friendRequestHandler);
         }
 
     }, [sessionId])
@@ -49,11 +49,11 @@ const FriendRequestsSidebarOptions: FC<FriendRequestsSidebarOptionsProps> = ({se
         </div>
         <p className='truncate'>Friend requests</p>
 
-        {unseenReqCount > 0 ? (
-            <div className='rounded-full w-5 h-5 text-xs flex justify-center items-center text-white bg-indigo-600'>
-                {unseenReqCount}
-            </div>
-        ) : null}
+        {unseenReqCount > 0 && (
+				<span className='inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-600 text-white'>
+					{unseenReqCount}
+				</span>
+		)}
     </Link>
   )
 }
